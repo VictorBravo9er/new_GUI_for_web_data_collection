@@ -1,18 +1,19 @@
 from tkinter import Entry
-import flet
+import flet as ft
 from Elements.Field import EntryField
+from Elements.List import EntryData
 
-
-def main(page: flet.Page):
+def main(page: ft.Page):
     page.title = "app"
-    page.theme_mode = flet.ThemeMode.DARK
+    page.theme_mode = ft.ThemeMode.DARK
     page.window_resizable = True
-
+    from PopulatedEntries import entries
     page.add(
-        EntryField("head", True, button_icon=flet.icons.EXIT_TO_APP),
+        entries
     )
+    page.expand = True
     page.update()
 
 
 if __name__ == '__main__':
-    flet.app(target=main,)# view=flet.AppView.WEB_BROWSER)
+    ft.app(target=main,)# view=ft.AppView.WEB_BROWSER)

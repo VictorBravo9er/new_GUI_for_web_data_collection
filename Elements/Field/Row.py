@@ -3,22 +3,23 @@ Each row element is defined by this class. They have a Text description, \
 text-field and an optional intractable (preferably a button)
 """
 
-import flet
+from ctypes import alignment
+import flet as ft
 
 
-class EntryField(flet.UserControl):
+class EntryField(ft.UserControl):
     """
     This class related to an individual data point to be collected. \
     They have a Text description, text-field and an optional intractable \
     (preferably a button)
 
     Inherited from:
-    @   flet.UserControl
+    @   ft.UserControl
     """
 
     def __init__(
             self, heading: str, button_visible: bool = False,
-            button_icon: str = ''
+            button_icon: str = '', type:str = "text"
     ):
         """
         EntryField Class initializer.
@@ -29,23 +30,28 @@ class EntryField(flet.UserControl):
         @   button_icon (str, optional): _description_. Defaults to ''.
         """
         super().__init__()
-        self.heading = flet.Text(value=heading, expand=True)
-        self.entry = flet.TextField(
-            value=heading, hint_text=f"Enter {heading}", expand=True,
+
+        # set the elements of the field
+        self.heading = ft.Text(
+            value=heading, width=250, text_align=ft.TextAlign.END
         )
-        self.intractable = flet.IconButton(
-            icon=button_icon, expand=True, visible=button_visible,
-            disabled=not button_visible
+        self.entry = ft.TextField(
+            hint_text=f"Enter {heading}", expand=True,
+        )
+        self.intractable = ft.IconButton(
+            icon=button_icon, visible=button_visible,
+            disabled=not button_visible,
         )
 
-    def build(self) -> flet.Row:
+
+    def build(self) -> ft.Row:
         """
         Builds the element.
 
         Returns:
-        ?   flet.Row: A row element with the Text description, text-field and an optional intractable
+        ?   ft.Row: A row element with the Text description, text-field and an optional intractable
         """
-        return flet.Row(
+        return ft.Row(
             controls=[
                 self.heading,
                 self.entry,
@@ -53,3 +59,7 @@ class EntryField(flet.UserControl):
             ],
             expand=True,
         )
+
+    def __repr__(self):
+        return f"{self.heading.value}: {self.intractable.icon}"
+        
