@@ -1,7 +1,6 @@
 """
 This module incorporated all EntryField(s) and make a higher order element
 """
-from typing import Any, List
 import flet as ft
 from ..Field import EntryField
 
@@ -17,16 +16,24 @@ class EntryData(ft.UserControl):
     __sumbit_enabled_msg = "Click to submit data"
     __submit_disabled_mdg = "Fill in the above fields"
 
-    def __init__(self, entries: list[EntryField]):
+    def __init__(
+        self, controls: list[EntryField], 
+        width: None | int | float = None,   # in built functionalities
+        height: None | int | float = None, expand: None | bool | int = None,
+        opacity: None | int | float = None, visible: bool | None = None, disabled: bool | None = None, 
+    ):
         """
         EntryData Class initializer.
 
         Args:
         @   entries (list[ft.Control]): a list of elements that needs to be put in the Data.
         """
-        super().__init__()
+        super().__init__(
+            controls=controls, width=width, height=height, expand=expand,  # type: ignore
+            opacity=opacity, visible=visible, disabled=disabled
+        )
 
-        self.entries = entries
+        self.entries = controls
         self.submit_button = ft.ElevatedButton(
             "submit", disabled=True, tooltip=self.__submit_disabled_mdg,
             visible=False

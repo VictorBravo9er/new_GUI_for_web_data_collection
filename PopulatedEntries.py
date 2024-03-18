@@ -2,6 +2,8 @@ from Elements.List import EntryData
 from Elements.Field import EntryField
 from entries import entries
 
+# TODO need to re work this one. probably heavy refactoring
+
 
 entries = EntryData(
     [
@@ -10,3 +12,5 @@ entries = EntryData(
         ) for entry in entries
     ]
 )
+
+

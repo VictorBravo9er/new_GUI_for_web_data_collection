@@ -1,7 +1,4 @@
-from tkinter import Entry
 import flet as ft
-from Elements.Field import EntryField
-from Elements.List import EntryData
 
 def main(page: ft.Page):
     page.title = "app"
