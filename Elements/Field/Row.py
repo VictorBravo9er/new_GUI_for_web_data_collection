@@ -23,7 +23,7 @@ class EntryField(ft.UserControl):
         
 
     def __init__(
-        self, heading: str, type_: SelectorType = SelectorType.text_field,
+        self, heading: str, page:ft.Page, type_: SelectorType = SelectorType.text_field,
         button_icon: None | str = None, 
         visible: None | bool = None, disabled: None | bool = None,   # inbuilt functionalities
         width: None | int | float = None, height: None | int | float = None,  
@@ -43,7 +43,8 @@ class EntryField(ft.UserControl):
             width=width, height=height, expand=expand, 
             opacity=opacity, visible=visible, disabled=disabled,
         )
-
+        self.page = page
+        self.file_picker = ft.FilePicker(on_result=self.fileSelectorEvent)
         # set the elements of the field
         self.heading = ft.Text(value=heading, width=250, text_align=ft.TextAlign.END)
         try:
@@ -65,16 +66,47 @@ class EntryField(ft.UserControl):
                     ),
                     ft.IconButton(
                         icon=ft.icons.FILE_UPLOAD, visible=True,
-                        tooltip="Select the desired file", on_click=...
+                        tooltip="Select the desired file",
+                        on_click=lambda _:self.file_picker.pick_files(
+                            f"Select the {heading} file",
+                            file_type=ft.FilePickerFileType.ANY,
+                        )
                         # TODO: complete the file picker funtionality
                     )
                 )
             }[type_]
         except(KeyError):
-            raise TypeError(f"'{type}' is not a valid type for SelectorType")
+            raise TypeError(f"'{type_}' is not a valid type for SelectorType")
+        self.page.overlay.append(self.file_picker)
+        self.update()
 
-    def displayIntractable(self, e):
-        self.intractable.visible=True
+    def fileSelectorEvent(self, e: ft.FilePickerResultEvent):
+        file = e.files[0].path  # type: ignore
+        self.entry.value = file
+        self.entry.on_change(e)  # type: ignore
+        self.update()
+
+    def __bool__(self) -> bool:
+        """
+        Returns True if the entry field is filled.
+
+        Returns:
+        ?   bool:
+        """
+        return True if self.entry.value else False
+
+    def displayIntractable(self, e: ft.ControlEvent):
+        """
+        Changes the visible status of the IconButton {self.intractable}
+
+        Args:
+        @   e (ft.ControlEvent): Control event object
+        """
+        if self.entry.value:
+            self.intractable.visible=True
+            self.update()
+            return
+        self.intractable.visible=False
         self.update()
 
     def build(self) -> ft.Row:
@@ -93,6 +125,29 @@ class EntryField(ft.UserControl):
             expand=True,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
+        """
+        Returns a string representation of an object instance
+
+        Returns:
+        ?   str
+        """
         return f"{self.heading.value}{self.entry.value}: {self.intractable.icon}"
-        
+
+
+def main(page: ft.Page):
+    page.title = "Row test"
+    page.theme_mode = ft.ThemeMode.DARK
+    page.window_resizable = True
+    page.add(
+        EntryField("hi", type_=EntryField.SelectorType.file_picker, page=page)
+    )
+    page.update()
+
+
+if __name__ == "__main__":
+    # a = EntryField("asd")
+    # if a:
+    #     print("sadas")
+    # print(a)
+    ft.app(main)

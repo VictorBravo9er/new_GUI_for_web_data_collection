@@ -14,7 +14,7 @@ class EntryData(ft.UserControl):
     """
 
     __sumbit_enabled_msg = "Click to submit data"
-    __submit_disabled_mdg = "Fill in the above fields"
+    __submit_disabled_msg = "Fill in the above fields"
 
     def __init__(
         self, controls: list[EntryField], 
@@ -29,17 +29,18 @@ class EntryData(ft.UserControl):
         @   entries (list[ft.Control]): a list of elements that needs to be put in the Data.
         """
         super().__init__(
-            controls=controls, width=width, height=height, expand=expand,  # type: ignore
+            width=width, height=height, expand=expand,
             opacity=opacity, visible=visible, disabled=disabled
         )
 
         self.entries = controls
+        for ent in self.entries:
+            ent.entry.on_change = self.checkForSubmit
+            # ent.entry.on
         self.submit_button = ft.ElevatedButton(
-            "submit", disabled=True, tooltip=self.__submit_disabled_mdg,
-            visible=False
+            "submit", disabled=True, tooltip=self.__submit_disabled_msg,
+            visible=False, on_click=...
         )
-        for entry in self.entries:
-            print(entry.entry.value == "")
 
     def build(self) -> ft.ListView:
         """
@@ -58,3 +59,44 @@ class EntryData(ft.UserControl):
             alignment=ft.MainAxisAlignment.CENTER
         ))
         return view
+    
+    def checkForSubmit(self, e: ft.ControlEvent) -> None:
+        """
+        Checks if all fields are populated. If True, shows the Submit button,\
+        else hides it.
+
+        Args:
+        @   e (ft.ControlEvent):
+        """
+        self.submit_button.disabled, self.submit_button.visible = (
+            (False, True) if all(self.entries) else (True, False)
+        )
+        self.update()
+
+    @classmethod
+    def makePreDefinedElement(cls, page: ft.Page) -> "EntryData":
+        ent: list[tuple[str, EntryField.SelectorType]] = [ 
+            ("Website Name", EntryField.SelectorType.text_field, ),
+            ("Age", EntryField.SelectorType.text_field, ),
+            ("DA/PA (ahrefs)", EntryField.SelectorType.file_picker, ),
+            ("Performance Data", EntryField.SelectorType.file_picker, ),
+            ("Niche", EntryField.SelectorType.text_field, ),
+            ("Ahrefs data", EntryField.SelectorType.file_picker, ),
+            ("Monetization", EntryField.SelectorType.file_picker, ),
+            ("Revenue data", EntryField.SelectorType.file_picker, ),
+        ]
+        """
+        List of Entries
+        Each Entry is a tuple of the entry heading, followed by an \
+        icon, if any.
+        """
+        return EntryData(
+            [
+                EntryField(
+                    heading=entry[0], type_=entry[1], page=page
+                ) for entry in ent
+            ]
+        )
+
+
+
