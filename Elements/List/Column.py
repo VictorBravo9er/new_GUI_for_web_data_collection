@@ -39,7 +39,7 @@ class EntryData(ft.UserControl):
             # ent.entry.on
         self.submit_button = ft.ElevatedButton(
             "submit", disabled=True, tooltip=self.__submit_disabled_msg,
-            visible=False, on_click=...
+            visible=False, expand=True, on_click=...
         )
 
     def build(self) -> ft.ListView:
@@ -50,7 +50,8 @@ class EntryData(ft.UserControl):
         ?   ft.ListView: holds all the data
         """
         view =  ft.ListView(
-            controls=self.entries, expand=True  # type: ignore
+            controls=self.entries,  # type: ignore
+            spacing=10, padding=20
         )
         view.controls.append(ft.Row(
             [

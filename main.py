@@ -3,12 +3,11 @@ import flet as ft
 
 def main(page: ft.Page):
     page.title = "app"
-    page.theme_mode = ft.ThemeMode.DARK
     page.window_resizable = True
     page.add(
         EntryData.makePreDefinedElement(page)
     )
-    page.expand = True
+    # page.expand = True
     page.update()
 
 

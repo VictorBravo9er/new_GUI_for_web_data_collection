@@ -46,13 +46,12 @@ class EntryField(ft.UserControl):
         self.page = page
         self.file_picker = ft.FilePicker(on_result=self.fileSelectorEvent)
         # set the elements of the field
-        self.heading = ft.Text(value=heading, width=250, text_align=ft.TextAlign.END)
         try:
             self.entry, self.intractable = { 
                 self.SelectorType.text_field: (
                     ft.TextField(
-                        hint_text=f"Enter {heading}", expand=True,
-                        on_blur=self.displayIntractable,
+                        hint_text=f"Enter {heading}", expand=True, label=heading,
+                        on_blur=self.displayCheckMark,
                     ),
                     ft.IconButton(
                         icon=ft.icons.CHECK, icon_color=ft.colors.GREEN, visible=False,
@@ -61,22 +60,24 @@ class EntryField(ft.UserControl):
                 ),
                 self.SelectorType.file_picker: (
                     ft.TextField(
-                        hint_text=f"Enter {heading}", expand=True,
+                        hint_text=f"Enter {heading}", expand=True, label=heading,
                         read_only=True,
                     ),
                     ft.IconButton(
                         icon=ft.icons.FILE_UPLOAD, visible=True,
-                        tooltip="Select the desired file",
                         on_click=lambda _:self.file_picker.pick_files(
                             f"Select the {heading} file",
                             file_type=ft.FilePickerFileType.ANY,
+                            allow_multiple=False
                         )
-                        # TODO: complete the file picker funtionality
                     )
                 )
             }[type_]
         except(KeyError):
             raise TypeError(f"'{type_}' is not a valid type for SelectorType")
+        self.entry.color = ft.colors.BLACK
+        self.entry.bgcolor = ft.colors.GREY_400
+        self.intractable.bgcolor = ft.colors.GREY_400
         self.page.overlay.append(self.file_picker)
         self.update()
 
@@ -95,7 +96,7 @@ class EntryField(ft.UserControl):
         """
         return True if self.entry.value else False
 
-    def displayIntractable(self, e: ft.ControlEvent):
+    def displayCheckMark(self, e: ft.ControlEvent):
         """
         Changes the visible status of the IconButton {self.intractable}
 
@@ -118,7 +119,6 @@ class EntryField(ft.UserControl):
         """
         return ft.Row(
             controls=[
-                self.heading,
                 self.entry,
                 self.intractable
             ],
@@ -132,7 +132,7 @@ class EntryField(ft.UserControl):
         Returns:
         ?   str
         """
-        return f"{self.heading.value}{self.entry.value}: {self.intractable.icon}"
+        return f"{self.entry.label}{self.entry.value}: {self.intractable.icon}"
 
 
 def main(page: ft.Page):
